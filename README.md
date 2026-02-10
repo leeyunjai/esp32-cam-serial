@@ -1,8 +1,8 @@
-# 🎯 ESP32-CAM × YOLOv8 — Real-Time Object Detection over Serial
+# 🎯 ESP32-CAM × YOLO26 — Real-Time Object Detection over Serial
 
 <p align="center">
   <img src="https://img.shields.io/badge/ESP32--CAM-Serial%20Stream-blue?style=for-the-badge&logo=espressif&logoColor=white" />
-  <img src="https://img.shields.io/badge/YOLOv8-Ultralytics-purple?style=for-the-badge&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/YOLO26-Ultralytics-purple?style=for-the-badge&logo=python&logoColor=white" />
   <img src="https://img.shields.io/badge/Flask-Web%20UI-green?style=for-the-badge&logo=flask&logoColor=white" />
   <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" />
 </p>
@@ -23,7 +23,7 @@ Instead, it pushes raw JPEG frames through the **USB serial port** at 115200 bau
 
 ```
 ┌─────────────┐    Serial (USB)    ┌──────────────────┐    HTTP    ┌─────────┐
-│  ESP32-CAM   │ ──── 115200 ────▶ │  Python + YOLOv8  │ ────────▶ │ Browser │
+│  ESP32-CAM   │ ──── 115200 ────▶ │  Python + YOLO26  │ ────────▶ │ Browser │
 │  JPEG frames │    binary proto   │  Flask server     │  :5000   │  Viewer │
 └─────────────┘                    └──────────────────┘           └─────────┘
 ```
