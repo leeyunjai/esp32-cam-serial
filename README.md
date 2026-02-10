@@ -17,7 +17,7 @@
 
 Most ESP32-CAM projects stream video over Wi-Fi. **This one doesn't.**
 
-Instead, it pushes raw JPEG frames through the **USB serial port** at 115200 baud, where a host PC picks them up, runs **YOLOv8 inference in real time**, and serves the annotated stream via a local web interface.
+Instead, it pushes raw JPEG frames through the **USB serial port** at 115200 baud, where a host PC picks them up, runs **YOLO26 inference in real time**, and serves the annotated stream via a local web interface.
 
 **Why serial?** Because sometimes Wi-Fi isn't an option — embedded environments, RF-restricted zones, or when you just want a dead-simple wired connection with zero network config.
 
@@ -32,7 +32,7 @@ Instead, it pushes raw JPEG frames through the **USB serial port** at 115200 bau
 
 - **Plug & Play** — Auto-detects ESP32-CAM serial port (CP210x, CH340, FTDI)
 - **Custom Binary Protocol** — `START` header + 4-byte little-endian size + JPEG payload
-- **Real-Time YOLO Inference** — Runs YOLOv8n at 320×240 for low-latency detection
+- **Real-Time YOLO Inference** — Runs YOLO26n (NMS-free, edge-optimized) at 320×240 for low-latency detection
 - **Web Dashboard** — Live MJPEG stream served on `localhost:5000`
 - **Standalone Packaging** — PyInstaller-ready with `resource_path()` support
 
@@ -40,7 +40,7 @@ Instead, it pushes raw JPEG frames through the **USB serial port** at 115200 bau
 
 ### 1. Flash the ESP32-CAM
 
-Open `esp32cam_serial.ino` in Arduino IDE:
+Open `esp32cam.ino` in Arduino IDE:
 
 - **Board:** `AI Thinker ESP32-CAM`
 - **Upload Speed:** `115200`
@@ -52,8 +52,8 @@ Upload, then disconnect GPIO0 from GND and reset.
 
 ```bash
 # Clone
-git clone https://github.com/YOUR_USERNAME/esp32cam-yolo-serial.git
-cd esp32cam-yolo-serial
+git clone https://github.com/leeyunjai82/esp32-cam-serial.git
+cd esp32-cam-serial
 
 # Install dependencies
 pip install ultralytics flask pyserial opencv-python numpy
@@ -80,11 +80,9 @@ The Python receiver implements a simple state machine: sync on `S` → verify `T
 
 ```
 .
-├── main.py                  # Python server (serial reader + YOLO + Flask)
-├── esp32cam_serial/
-│   └── esp32cam_serial.ino  # Arduino firmware for ESP32-CAM
-├── yolo26n.pt               # YOLOv8 custom model weights
-├── requirements.txt
+├── main.py           # Python server (serial reader + YOLO + Flask)
+├── esp32cam.ino      # Arduino firmware for ESP32-CAM
+├── yolo26n.pt        # YOLO26 nano model weights
 └── README.md
 ```
 
@@ -93,7 +91,7 @@ The Python receiver implements a simple state machine: sync on `S` → verify `T
 | Parameter | Default | Description |
 |-----------|---------|-------------|
 | `BAUD_RATE` | `115200` | Serial communication speed |
-| `imgsz` | `320` | YOLO inference resolution |
+| `imgsz` | `320` | YOLO26 inference resolution |
 | `jpeg_quality` | `12` | ESP32 JPEG compression (1–63, lower = better) |
 | `FRAMESIZE` | `QVGA` | Camera resolution (320×240) |
 | `delay()` | `100ms` | Frame interval (~10 FPS target) |
@@ -115,7 +113,7 @@ The Python receiver implements a simple state machine: sync on `S` → verify `T
 | Metric | Value |
 |--------|-------|
 | Serial throughput | ~8–12 FPS @ QVGA |
-| YOLO inference | ~30–50ms per frame |
+| YOLO26 inference | ~30–50ms per frame |
 | End-to-end latency | ~150–200ms |
 | JPEG size per frame | ~5–15 KB |
 
